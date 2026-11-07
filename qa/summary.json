@@ -1,0 +1,52 @@
+{
+  "home": {
+    "h1": "Не удается получить доступ к сайту",
+    "video": [],
+    "canvas": [],
+    "overflow": 0,
+    "height": 414
+  },
+  "homeErrors": [],
+  "configurator": {
+    "canvas": [],
+    "buttons": []
+  },
+  "estimator": {},
+  "beforeAfter": null,
+  "metrics": null,
+  "mobileMenu": {
+    "open": false,
+    "overflow": "visible",
+    "links": [],
+    "widthOverflow": 0
+  },
+  "mobileErrors": [],
+  "servicesModal": {
+    "opened": true,
+    "open": false
+  },
+  "servicesErrors": [],
+  "locations": {
+    "selected": []
+  },
+  "locationsErrors": [],
+  "privacy": {
+    "h1": "Не удается получить доступ к сайту",
+    "sections": 0,
+    "overflow": 0,
+    "hasContact": false
+  },
+  "terms": {
+    "h1": "Не удается получить доступ к сайту",
+    "sections": 0,
+    "overflow": 0,
+    "hasContact": false
+  },
+  "legalErrors": [],
+  "errors": [
+    {
+      "label": "booking-flow",
+      "error": "Error: ReferenceError: makeIndex is not defined\n    at <anonymous>:6:15\n    at <anonymous>:7:7"
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+// Motor City Auto Spa — production data model
+// PostgreSQL via Prisma. All monetary values are stored in integer cents.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  UNPAID
+  DEPOSIT_PAID
+  PAID_IN_FULL
+  REFUNDED
+}
+
+model Location {
+  id           String    @id @default(cuid())
+  slug         String    @unique
+  name         String
+  addressLine1 String
+  city         String
+  state        String
+  postalCode   String
+  phone        String
+  email        String
+  mapsQuery    String
+  latitude     Float
+  longitude    Float
+  hours        Json
+  bookings     Booking[]
+
+  @@map("locations")
+}
+
+model Service {
+  id           String    @id @default(cuid())
+  slug         String    @unique
+  name         String
+  category     String
+  summary      String
+  fromPrice    Int
+  durationMin  Int
+  depositCents Int       @default(10000)
+  active       Boolean   @default(true)
+  bookings     Booking[]
+
+  @@map("services")
+}
+
+model Booking {
+  id                    String        @id @default(cuid())
+  reference             String        @unique
+  customerName          String
+  email                 String
+  phone                 String
+  vehicleYear           Int
+  vehicleMake           String
+  vehicleModel          String
+  vehicleType           String
+  locationId            String
+  serviceId             String
+  location              Location      @relation(fields: [locationId], references: [id])
+  service               Service       @relation(fields: [serviceId], references: [id])
+  scheduledDate         DateTime      @db.Date
+  timeSlot              String
+  addOns                String[]      @default([])
+  notes                 String?
+  status                BookingStatus @default(PENDING)
+  paymentStatus         PaymentStatus @default(UNPAID)
+  depositAmount         Int
+  stripePaymentIntentId String?
+  stripeCheckoutId      String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  @@unique([locationId, scheduledDate, timeSlot])
+  @@index([scheduledDate, locationId])
+  @@index([email])
+  @@map("bookings")
+}
+
+model TimeSlotBlock {
+  id         String   @id @default(cuid())
+  locationId String
+  date       DateTime @db.Date
+  timeSlot   String
+  reason     String?
+  createdAt  DateTime @default(now())
+
+  @@unique([locationId, date, timeSlot])
+  @@map("time_slot_blocks")
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String   @default("footer")
+  createdAt DateTime @default(now())
+
+  @@map("subscribers")
+}
+
+model ServiceDeposit {
+  id              String   @id @default(cuid())
+  reference       String   @unique
+  serviceSlug     String
+  locationSlug    String
+  customerName    String
+  email           String
+  phone           String
+  amountCents     Int      @default(10000)
+  status          String   @default("PENDING")
+  stripeSessionId String?  @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([email])
+  @@map("service_deposits")
+}
